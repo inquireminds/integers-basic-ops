@@ -1,735 +1,439 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spooky Integer Cauldron - Halloween Arcade</title>
-    <!-- Tailwind CSS -->
+    <title>Spooky Integer Cauldron</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        halloween: {
-                            orange: '#ff6b00',
-                            purple: '#7928ca',
-                            green: '#10b981',
-                            dark: '#090514',
-                            card: '#1a103c',
-                            neonPink: '#ff007f'
-                        }
-                    },
-                    animation: {
-                        float: 'float 3s ease-in-out infinite',
-                        pulseGlow: 'pulseGlow 2s infinite',
-                        shake: 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
-                        bounceSlow: 'bounce 2s infinite'
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-10px)' }
-                        },
-                        pulseGlow: {
-                            '0%, 100%': { boxShadow: '0 0 15px rgba(255, 107, 0, 0.5)' },
-                            '50%': { boxShadow: '0 0 30px rgba(255, 107, 0, 0.9)' }
-                        },
-                        shake: {
-                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
-                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
-                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
-                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Google Fonts: Creepster & Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        .font-creepster {
-            font-family: 'Creepster', cursive;
-            letter-spacing: 0.05em;
-        }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #090514;
+            background-color: #0b091a;
             color: #f3f4f6;
             overflow-x: hidden;
         }
-        /* Custom glowing scrollbars and effects */
-        .glow-text {
-            text-shadow: 0 0 10px rgba(255, 107, 0, 0.7), 0 0 20px rgba(255, 107, 0, 0.4);
+        .font-creepster {
+            font-family: 'Creepster', cursive;
         }
         .glow-purple {
-            text-shadow: 0 0 10px rgba(121, 40, 202, 0.8);
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
         }
-        .bg-grid {
-            background-image: radial-gradient(rgba(121, 40, 202, 0.15) 1px, transparent 1px);
-            background-size: 24px 24px;
+        .glow-green {
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.4);
+        }
+        .glow-orange {
+            box-shadow: 0 0 25px rgba(249, 115, 22, 0.4);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 2s ease-in-out infinite;
         }
     </style>
 </head>
-<body class="bg-grid min-h-screen flex flex-col items-center justify-between p-4 selection:bg-halloween-orange selection:text-white">
+<body class="min-h-screen flex flex-col items-center justify-between p-4 sm:p-6 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-950 via-slate-950 to-black">
 
-    <header class="w-full max-w-4xl flex items-center justify-between py-3 px-4 bg-halloween-card/80 backdrop-blur-md rounded-2xl border border-purple-900/50 shadow-2xl mb-4">
-        <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-halloween-orange to-halloween-purple flex items-center justify-center shadow-lg animate-bounceSlow">
-                <i data-lucide="skull" class="w-6 h-6 text-white"></i>
-            </div>
-            <div>
-                <h1 class="font-creepster text-2xl md:text-3xl tracking-wider text-halloween-orange glow-text">Spooky Integer Cauldron</h1>
-                <p class="text-xs text-purple-300 font-medium">Integer Addition & Subtraction Arcade</p>
-            </div>
-        </div>
+    <header class="w-full max-w-4xl flex items-center justify-between mb-4">
         <div class="flex items-center space-x-2">
-            <button id="soundToggleBtn" onclick="toggleSound()" class="p-2.5 rounded-xl bg-purple-950/60 border border-purple-800/50 hover:bg-purple-900 text-purple-200 transition active:scale-95 shadow-md flex items-center space-x-1" title="Toggle Sound">
-                <i id="soundIcon" data-lucide="volume-2" class="w-5 h-5 text-halloween-green"></i>
+            <span class="text-3xl animate-bounce">🎃</span>
+            <h1 class="text-2xl sm:text-4xl font-creepster tracking-wider text-purple-400 drop-shadow-[0_2px_10px_rgba(168,85,247,0.5)]">Spooky Integer Cauldron</h1>
+        </div>
+        <div class="flex items-center space-x-3">
+            <button id="musicToggleBtn" onclick="toggleMusic()" class="bg-purple-900/60 hover:bg-purple-800 text-purple-200 border border-purple-600/50 px-3 py-1.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-lg">
+                <span id="musicIcon">🔇</span> <span id="musicText" class="hidden sm:inline">Music Off</span>
             </button>
-            <button onclick="openRulesModal()" class="p-2.5 rounded-xl bg-purple-950/60 border border-purple-800/50 hover:bg-purple-900 text-purple-200 transition active:scale-95 shadow-md flex items-center space-x-1" title="How to Play">
-                <i data-lucide="book-open" class="w-5 h-5 text-halloween-orange"></i>
-            </button>
+            <div id="highScoreBadge" class="bg-amber-950/60 border border-amber-600/40 text-amber-300 px-3 py-1.5 rounded-xl text-sm font-bold flex items-center gap-1.5">
+                <span>🏆</span> Best: <span id="highScoreDisplay">0</span>
+            </div>
         </div>
     </header>
 
-    <main class="w-full max-w-4xl flex-1 flex flex-col items-center justify-center relative mb-6">
+    <main class="w-full max-w-2xl flex-1 flex flex-col items-center justify-center relative">
 
-        <!-- VIEW 1: Main Menu -->
-        <div id="mainMenuView" class="w-full flex flex-col items-center justify-center space-y-6 py-8">
-            <div class="relative group cursor-pointer" onclick="startCountdown()">
-                <div class="absolute -inset-1 bg-gradient-to-r from-halloween-orange via-halloween-purple to-halloween-neonPink rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition duration-500 animate-pulseGlow"></div>
-                <div class="relative bg-halloween-card border-2 border-purple-700/60 rounded-3xl p-8 md:p-12 text-center max-w-lg w-full shadow-2xl flex flex-col items-center space-y-6">
-                    <div class="w-24 h-24 rounded-full bg-halloween-orange/10 border-2 border-halloween-orange/30 flex items-center justify-center animate-float">
-                        <i data-lucide="ghost" class="w-14 h-14 text-halloween-orange"></i>
-                    </div>
-                    <div>
-                        <h2 class="font-creepster text-4xl md:text-5xl text-halloween-orange glow-text mb-2">Brew the Spell!</h2>
-                        <p class="text-gray-300 text-sm md:text-base leading-relaxed">
-                            Master negative numbers, addition, and subtraction! Zap spooky ghosts and feed the cauldron before time runs out!
-                        </p>
-                    </div>
-
-                    <!-- Mode Selector -->
-                    <div class="w-full grid grid-cols-2 gap-3">
-                        <button onclick="setDifficulty('normal')" id="diffNormalBtn" class="p-3 rounded-xl border-2 border-halloween-orange bg-halloween-orange/20 text-white font-bold transition flex flex-col items-center space-y-1">
-                            <i data-lucide="shield" class="w-5 h-5 text-halloween-orange"></i>
-                            <span class="text-sm">Standard Spells</span>
-                            <span class="text-[10px] text-gray-300">(-15 to +15 numbers)</span>
-                        </button>
-                        <button onclick="setDifficulty('hard')" id="diffHardBtn" class="p-3 rounded-xl border-2 border-purple-900 bg-purple-950/40 text-gray-400 font-bold transition flex flex-col items-center space-y-1">
-                            <i data-lucide="zap" class="w-5 h-5 text-halloween-neonPink"></i>
-                            <span class="text-sm">Nightmare Mode</span>
-                            <span class="text-[10px] text-gray-400">(-30 to +30 & double negatives)</span>
-                        </button>
-                    </div>
-
-                    <button onclick="startCountdown()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-halloween-orange to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-extrabold text-xl shadow-xl transition transform hover:scale-[1.02] active:scale-95 flex items-center justify-center space-x-3 border border-orange-400/40">
-                        <i data-lucide="play" class="w-6 h-6 fill-current"></i>
-                        <span class="font-creepster tracking-wider text-2xl">START HAUNTING</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- High Score Banner -->
-            <div class="flex items-center space-x-3 bg-halloween-card/60 border border-purple-900/40 px-6 py-3 rounded-2xl shadow-lg">
-                <i data-lucide="award" class="w-6 h-6 text-yellow-400"></i>
-                <div class="text-sm">
-                    <span class="text-gray-400">Best Cauldron Score:</span>
-                    <span id="highScoreDisplay" class="font-extrabold text-halloween-orange ml-1 text-lg">0</span>
-                </div>
-            </div>
+        <div id="startScreen" class="w-full bg-slate-900/90 border border-purple-500/30 rounded-3xl p-6 sm:p-10 text-center glow-purple flex flex-col items-center backdrop-blur-md">
+            <div class="text-6xl sm:text-7xl mb-4 animate-float">🧪</div>
+            <h2 class="text-3xl sm:text-4xl font-creepster text-purple-300 mb-3 tracking-wide">Brew the Magic Formula!</h2>
+            <p class="text-slate-300 text-sm sm:text-base max-w-md mb-8 leading-relaxed">
+                Master adding and subtracting integers from <span class="text-purple-400 font-bold">-15</span> to <span class="text-purple-400 font-bold">+15</span>! 
+                <br><br>
+                <span class="text-amber-400 font-semibold">⚡ Adaptive Rules:</span> Starts at <span class="text-white font-bold">3 minutes (180s)</span>. Every streak of <span class="text-green-400 font-bold">3 correct answers</span> adds <span class="text-green-400 font-bold">+10 bonus seconds</span>!
+            </p>
+            <button onclick="startGame()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-lg px-8 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 border border-purple-400/40 flex items-center gap-3">
+                <span>👻</span> Enter the Haunted Kitchen
+            </button>
         </div>
 
-        <!-- VIEW 2: Countdown Overlay -->
-        <div id="countdownView" class="hidden absolute inset-0 bg-halloween-dark/90 backdrop-blur-md flex flex-col items-center justify-center z-30">
-            <div id="countdownNumber" class="font-creepster text-8xl md:text-9xl text-halloween-orange glow-text animate-bounce">3</div>
-            <p class="text-purple-300 font-bold text-lg mt-4 tracking-widest uppercase">Prepare your wand...</p>
-        </div>
-
-        <!-- VIEW 3: Active Gameplay View -->
-        <div id="gameplayView" class="hidden w-full flex flex-col space-y-4">
+        <div id="gameScreen" class="w-full hidden flex flex-col items-center">
             
-            <!-- HUD Bar -->
-            <div class="w-full grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="bg-halloween-card border border-purple-900/60 rounded-2xl p-3 flex items-center justify-between shadow-lg">
-                    <div class="flex items-center space-x-2">
-                        <i data-lucide="clock" class="w-5 h-5 text-halloween-orange"></i>
-                        <span class="text-xs text-gray-400 font-semibold uppercase">Time</span>
-                    </div>
-                    <span id="hudTimer" class="font-extrabold text-xl text-halloween-orange">60s</span>
+            <!-- Top Game Stats Bar -->
+            <div class="w-full grid grid-cols-3 gap-3 mb-4">
+                <div class="bg-slate-900/80 border border-purple-500/30 rounded-2xl p-3 text-center flex flex-col items-center shadow-lg">
+                    <span class="text-xs text-purple-300 uppercase tracking-wider font-semibold">Time Left</span>
+                    <span id="timerDisplay" class="text-xl sm:text-2xl font-black text-purple-400 mt-0.5">03:00</span>
                 </div>
-
-                <div class="bg-halloween-card border border-purple-900/60 rounded-2xl p-3 flex items-center justify-between shadow-lg">
-                    <div class="flex items-center space-x-2">
-                        <i data-lucide="star" class="w-5 h-5 text-yellow-400"></i>
-                        <span class="text-xs text-gray-400 font-semibold uppercase">Score</span>
-                    </div>
-                    <span id="hudScore" class="font-extrabold text-xl text-yellow-400">0</span>
+                <div class="bg-slate-900/80 border border-emerald-500/30 rounded-2xl p-3 text-center flex flex-col items-center shadow-lg">
+                    <span class="text-xs text-emerald-300 uppercase tracking-wider font-semibold">Score</span>
+                    <span id="scoreDisplay" class="text-xl sm:text-2xl font-black text-emerald-400 mt-0.5">0</span>
                 </div>
-
-                <div class="bg-halloween-card border border-purple-900/60 rounded-2xl p-3 flex items-center justify-between shadow-lg">
-                    <div class="flex items-center space-x-2">
-                        <i data-lucide="flame" class="w-5 h-5 text-halloween-neonPink"></i>
-                        <span class="text-xs text-gray-400 font-semibold uppercase">Streak</span>
-                    </div>
-                    <span id="hudStreak" class="font-extrabold text-xl text-halloween-neonPink">0x</span>
-                </div>
-
-                <div class="bg-halloween-card border border-purple-900/60 rounded-2xl p-3 flex items-center justify-between shadow-lg">
-                    <div class="flex items-center space-x-2">
-                        <i data-lucide="heart" class="w-5 h-5 text-red-500"></i>
-                        <span class="text-xs text-gray-400 font-semibold uppercase">Lives</span>
-                    </div>
-                    <div id="hudLives" class="flex space-x-1 text-red-500">
-                        <i data-lucide="heart" class="w-4 h-4 fill-current"></i>
-                        <i data-lucide="heart" class="w-4 h-4 fill-current"></i>
-                        <i data-lucide="heart" class="w-4 h-4 fill-current"></i>
-                    </div>
+                <div class="bg-slate-900/80 border border-amber-500/30 rounded-2xl p-3 text-center flex flex-col items-center shadow-lg">
+                    <span class="text-xs text-amber-300 uppercase tracking-wider font-semibold">Streak</span>
+                    <span id="streakDisplay" class="text-xl sm:text-2xl font-black text-amber-400 mt-0.5">0 🔥</span>
                 </div>
             </div>
 
-            <!-- Main Cauldron & Ghost Arena -->
-            <div id="gameArena" class="relative w-full h-[380px] md:h-[420px] bg-gradient-to-b from-purple-950/40 via-halloween-card/60 to-purple-950/80 border-2 border-purple-800/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col items-center justify-between p-6">
-                
-                <!-- Floating Spooky Ghost Target Area -->
-                <div class="w-full flex-1 relative flex items-center justify-center">
-                    
-                    <!-- Number Line Helper Toggle / Card -->
-                    <div class="absolute top-2 left-2 z-10 flex flex-col space-y-1">
-                        <button onclick="toggleNumberLine()" class="px-3 py-1.5 rounded-xl bg-purple-900/80 hover:bg-purple-800 border border-purple-700 text-xs font-bold text-purple-200 flex items-center space-x-1 shadow transition">
-                            <i data-lucide="Sliders" class="w-3.5 h-3.5 text-halloween-orange"></i>
-                            <span id="numberLineToggleText">Show Number Line</span>
-                        </button>
-                    </div>
-
-                    <!-- Floating Ghost Entity -->
-                    <div id="ghostContainer" class="flex flex-col items-center animate-float transition-all duration-300">
-                        <div class="relative">
-                            <div class="absolute -inset-4 bg-halloween-orange/20 rounded-full blur-lg animate-pulse"></div>
-                            <div class="relative w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-purple-900/80 border-2 border-halloween-orange flex items-center justify-center shadow-2xl">
-                                <i id="ghostIcon" data-lucide="ghost" class="w-12 h-12 text-halloween-orange animate-bounceSlow"></i>
-                            </div>
-                        </div>
-                        <div id="problemBadge" class="mt-3 px-6 py-2 rounded-2xl bg-halloween-dark/90 border-2 border-purple-700 shadow-xl">
-                            <span id="problemText" class="font-creepster text-2xl md:text-3xl text-white tracking-widest glow-text">-5 + 8</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Number Line Helper Drawer (Collapsible) -->
-                <div id="numberLineDrawer" class="hidden w-full bg-halloween-dark/95 border border-purple-800/80 rounded-2xl p-3 mb-2 shadow-inner">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="text-[11px] text-purple-300 font-semibold uppercase tracking-wider">Number Line Helper</span>
-                        <span id="numberLinePosition" class="text-xs text-halloween-orange font-bold">Current Pos: 0</span>
-                    </div>
-                    <div class="relative w-full h-10 bg-purple-950/80 rounded-xl flex items-center px-4 border border-purple-900">
-                        <div class="w-full h-1 bg-purple-800 relative flex justify-between items-center">
-                            <!-- Ticks generated dynamically or via simple spans -->
-                            <div class="absolute -top-3 w-full flex justify-between text-[10px] text-gray-400 font-mono">
-                                <span>-10</span>
-                                <span>-5</span>
-                                <span>0</span>
-                                <span>+5</span>
-                                <span>+10</span>
-                            </div>
-                        </div>
-                        <!-- Marker -->
-                        <div id="numberLineMarker" class="absolute left-1/2 -translate-x-1/2 w-4 h-6 bg-halloween-orange rounded-md shadow-lg border border-white flex items-center justify-center transition-all duration-300">
-                            <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cauldron Input / Answer Keypad -->
-                <div class="w-full max-w-xl bg-halloween-dark/90 border border-purple-900/80 rounded-2xl p-4 shadow-2xl flex flex-col space-y-3">
-                    <div class="flex items-center justify-between px-2">
-                        <div class="flex items-center space-x-2">
-                            <i data-lucide="sparkles" class="w-4 h-4 text-halloween-orange"></i>
-                            <span class="text-xs text-purple-300 font-semibold uppercase">Cauldron Answer Box:</span>
-                        </div>
-                        <div id="answerDisplay" class="font-mono font-extrabold text-2xl text-halloween-orange min-w-[80px] text-right bg-purple-950/80 px-3 py-1 rounded-xl border border-purple-800/60 shadow-inner">
-                            0
-                        </div>
-                    </div>
-
-                    <!-- Keypad grid -->
-                    <div class="grid grid-cols-6 gap-2">
-                        <button onclick="appendKey('-')" class="p-3 rounded-xl bg-purple-900/60 hover:bg-purple-800 border border-purple-700/60 text-white font-extrabold text-lg transition active:scale-95 shadow">-</button>
-                        <button onclick="appendKey('7')" class="p-3 rounded-xl bg-purple-950/80 hover:bg-purple-900 border border-purple-800/60 text-white font-bold text-lg transition active:scale-95 shadow">7</button>
-                        <button onclick="appendKey('8')" class="p-3 rounded-xl bg-purple-950/80 hover:bg-purple-900 border border-purple-800/60 text-white font-bold text-lg transition active:scale-95 shadow">8</button>
-                        <button onclick="appendKey('9')" class="p-3 rounded-xl bg-purple-950/80 hover:bg-purple-900 border border-purple-800/60 text-white font-bold text-lg transition active:scale-95 shadow">9</button>
-                        <button onclick="clearAnswer()" class="p-3 rounded-xl bg-red-950/60 hover:bg-red-900 border border-red-800/60 text-red-300 font-bold text-sm transition active:scale-95 shadow flex items-center justify-center">C</button>
-                        <button onclick="deleteKey()" class="p-3 rounded-xl bg-purple-950/60 hover:bg-purple-900 border border-purple-800/60 text-purple-200 font-bold text-sm transition active:scale-95 shadow flex items-center justify-center"><i data-lucide="delete" class="w-4 h-4"></i></button>
-
-                        <button onclick="appendKey('0')" class="p-3 rounded-xl bg-purple-950/80 hover:bg-purple-900 border border-purple-800/60 text-white font-bold text-lg transition active:scale-95 shadow">0</button>
-                        <button onclick="appendKey('4')" class="p-3 rounded-xl bg-purple-950/80 hover:bg-purple-900 border border-purple-800/60 text-white font-bold text-lg transition active:scale-95 shadow">4</button>
-                        <button onclick="appendKey('5')" class="p-3 rounded-xl bg-purple-950/80 hover:bg-purple-900 border border-purple-800/60 text-white font-bold text-lg transition active:scale-95 shadow">5</button>
-                        <button onclick="appendKey('6')" class="p-3 rounded-xl bg-purple-950/80 hover:bg-purple-900 border border-purple-800/60 text-white font-bold text-lg transition active:scale-95 shadow">6</button>
-                        <button onclick="submitAnswer()" class="col-span-2 p-3 rounded-xl bg-gradient-to-r from-halloween-orange to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-extrabold text-sm transition active:scale-95 shadow-lg flex items-center justify-center space-x-1 font-creepster tracking-wider text-lg">
-                            <span>BREW!</span>
-                        </button>
-
-                        <div class="col-span-1"></div>
-                        <button onclick="appendKey('1')" class="p-3 rounded-xl bg-purple-950/80 hover:bg-purple-900 border border-purple-800/60 text-white font-bold text-lg transition active:scale-95 shadow">1</button>
-                        <button onclick="appendKey('2')" class="p-3 rounded-xl bg-purple-950/80 hover:bg-purple-900 border border-purple-800/60 text-white font-bold text-lg transition active:scale-95 shadow">2</button>
-                        <button onclick="appendKey('3')" class="p-3 rounded-xl bg-purple-950/80 hover:bg-purple-900 border border-purple-800/60 text-white font-bold text-lg transition active:scale-95 shadow">3</button>
-                        <div class="col-span-2"></div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- VIEW 4: Game Over / Results View -->
-        <div id="gameOverView" class="hidden w-full flex flex-col items-center justify-center space-y-6 py-8">
-            <div class="relative bg-halloween-card border-2 border-purple-700/60 rounded-3xl p-8 md:p-12 text-center max-w-md w-full shadow-2xl flex flex-col items-center space-y-6">
-                <div class="w-20 h-20 rounded-full bg-halloween-orange/10 border-2 border-halloween-orange/30 flex items-center justify-center animate-bounceSlow">
-                    <i data-lucide="trophy" class="w-10 h-10 text-yellow-400"></i>
-                </div>
-                <div>
-                    <h2 class="font-creepster text-4xl text-halloween-orange glow-text mb-1">Cauldron Complete!</h2>
-                    <p class="text-purple-300 text-xs">The spooky spell session has ended.</p>
-                </div>
-
-                <div class="w-full bg-purple-950/60 border border-purple-900/80 rounded-2xl p-4 flex flex-col space-y-3">
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-gray-400">Final Score:</span>
-                        <span id="finalScore" class="font-extrabold text-2xl text-yellow-400">0</span>
-                    </div>
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-gray-400">Max Combo Streak:</span>
-                        <span id="finalStreak" class="font-extrabold text-lg text-halloween-neonPink">0x</span>
-                    </div>
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-gray-400">Spells Brewed Correctly:</span>
-                        <span id="finalCorrect" class="font-extrabold text-lg text-halloween-green">0</span>
-                    </div>
-                </div>
-
-                <button onclick="returnToMenu()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-halloween-orange to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-extrabold text-xl shadow-xl transition transform hover:scale-[1.02] active:scale-95 flex items-center justify-center space-x-2 font-creepster tracking-wider text-xl">
-                    <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
-                    <span>PLAY AGAIN</span>
+            <!-- Number Line Toggle Button -->
+            <div class="w-full flex justify-end mb-2">
+                <button onclick="toggleNumberLine()" class="bg-slate-800 hover:bg-slate-700 text-purple-300 border border-purple-500/40 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 shadow">
+                    <span>📏</span> <span id="numberLineToggleText">Open Number Line (-20 to +20)</span>
                 </button>
             </div>
+
+            <!-- Collapsible Visual Number Line Drawer -->
+            <div id="numberLineDrawer" class="w-full hidden bg-slate-900/95 border border-purple-500/40 rounded-2xl p-4 mb-4 shadow-xl transition-all duration-300">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-bold text-purple-300 uppercase tracking-wider">Visual Number Line Assistant</span>
+                    <span class="text-xs text-slate-400">Click any tick or observe positions</span>
+                </div>
+                <div class="relative w-full py-6 overflow-x-auto">
+                    <div id="numberLineTicks" class="flex justify-between items-center min-w-[500px] px-4 relative">
+                        <!-- Rendered dynamically via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Cauldron Question Box -->
+            <div class="w-full bg-slate-900/90 border border-purple-500/40 rounded-3xl p-6 sm:p-8 text-center glow-purple flex flex-col items-center backdrop-blur-md relative overflow-hidden mb-6">
+                <div class="absolute -top-10 -right-10 text-8xl opacity-10 pointer-events-none">✨</div>
+                
+                <div class="text-5xl sm:text-6xl mb-3 animate-pulse-slow">🍲</div>
+                <h3 class="text-sm font-bold uppercase tracking-widest text-purple-400 mb-2">Brewing Spell Equation</h3>
+                
+                <!-- Equation Problem -->
+                <div id="problemDisplay" class="text-3xl sm:text-5xl font-extrabold tracking-wider text-white my-4 font-mono bg-slate-950/60 px-6 py-4 rounded-2xl border border-purple-500/20 shadow-inner">
+                    (-8) + (-5)
+                </div>
+
+                <!-- Feedback Banner -->
+                <div id="feedbackBanner" class="h-8 text-sm sm:text-base font-bold transition-all duration-200 mb-4 flex items-center justify-center"></div>
+
+                <!-- Answer Input Form -->
+                <form id="answerForm" onsubmit="submitAnswer(event)" class="w-full max-w-sm flex gap-3">
+                    <input type="number" id="answerInput" autocomplete="off" placeholder="Enter sum..." 
+                        class="flex-1 bg-slate-950 border-2 border-purple-500/50 focus:border-purple-400 text-white text-center text-xl sm:text-2xl font-bold py-3 px-4 rounded-2xl outline-none shadow-inner transition">
+                    <button type="submit" class="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-bold px-6 py-3 rounded-2xl shadow-lg transition active:scale-95 border border-emerald-400/40 text-lg">
+                        Brew
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div id="gameOverScreen" class="w-full hidden bg-slate-900/90 border border-purple-500/30 rounded-3xl p-6 sm:p-10 text-center glow-purple flex flex-col items-center backdrop-blur-md">
+            <div class="text-6xl sm:text-7xl mb-3">⚰️</div>
+            <h2 class="text-3xl sm:text-4xl font-creepster text-purple-300 mb-2 tracking-wide">Cauldron Session Complete!</h2>
+            <p class="text-slate-300 text-sm sm:text-base mb-6">Great cauldron stirring! Here are your mystical stats:</p>
+            
+            <div class="grid grid-cols-2 gap-4 w-full max-w-md mb-8">
+                <div class="bg-slate-950/80 border border-emerald-500/30 rounded-2xl p-4 flex flex-col items-center">
+                    <span class="text-xs text-emerald-300 uppercase tracking-wider font-semibold">Final Score</span>
+                    <span id="finalScore" class="text-3xl font-black text-emerald-400 mt-1">0</span>
+                </div>
+                <div class="bg-slate-950/80 border border-amber-500/30 rounded-2xl p-4 flex flex-col items-center">
+                    <span class="text-xs text-amber-300 uppercase tracking-wider font-semibold">Max Streak</span>
+                    <span id="finalStreak" class="text-3xl font-black text-amber-400 mt-1">0 🔥</span>
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-lg px-8 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 border border-purple-400/40 flex items-center gap-3">
+                <span>🔄</span> Brew Again
+            </button>
         </div>
 
     </main>
 
-    <!-- RULES MODAL -->
-    <div id="rulesModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-halloween-card border-2 border-purple-700 rounded-3xl max-w-md w-full p-6 shadow-2xl flex flex-col space-y-4 relative">
-            <button onclick="closeRulesModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-1">
-                <i data-lucide="x" class="w-6 h-6"></i>
-            </button>
-            <div class="flex items-center space-x-3">
-                <i data-lucide="book-open" class="w-7 h-7 text-halloween-orange"></i>
-                <h3 class="font-creepster text-2xl text-halloween-orange glow-text">How to Brew Spells</h3>
-            </div>
-            <div class="text-sm text-gray-300 space-y-2 leading-relaxed">
-                <p>1. <strong>Integer Addition & Subtraction:</strong> Look at the spooky math problem inside the floating ghost (e.g., <code class="text-halloween-orange font-mono font-bold">-5 + 8</code>).</p>
-                <p>2. <strong>Type the Answer:</strong> Use the keypad or your keyboard to enter the correct integer. Watch out for double negatives like <code class="text-halloween-orange font-mono font-bold">4 - (-6) = 10</code>!</p>
-                <p>3. <strong>Combo Streaks:</strong> Get multiple correct answers in a row to rack up score multipliers!</p>
-                <p>4. <strong>Number Line Helper:</strong> Click "Show Number Line" if you need a visual guide for positive and negative jumps.</p>
-            </div>
-            <button onclick="closeRulesModal()" class="w-full py-3 rounded-xl bg-purple-900 hover:bg-purple-800 text-white font-bold transition">Got it, Let's Spook!</button>
-        </div>
-    </div>
+    <footer class="w-full max-w-4xl text-center text-xs text-slate-500 mt-4">
+        Spooky Integer Cauldron • Designed for Ages 12-14 Math Mastery
+    </footer>
 
     <script>
-        // Lucide icon initialization
-        lucide.createIcons();
+        // Game State Variables
+        let score = 0;
+        let streak = 0;
+        let maxStreak = 0;
+        let timeLeft = 180; // 3 minutes baseline
+        let timerInterval = null;
+        let currentProblem = { num1: 0, op: '+', num2: 0, answer: 0 };
+        let isNumberLineOpen = false;
 
-        // Audio synthesizer using Web Audio API (No external assets required!)
+        // Web Audio API Ambient Spooky Music Variables
         let audioCtx = null;
-        let soundEnabled = true;
+        let isMusicPlaying = false;
+        let musicOsc1 = null, musicOsc2 = null, musicGain = null;
 
-        function initAudio() {
+        // Initialize High Score on load
+        window.onload = function() {
+            const savedHighScore = localStorage.getItem('spooky_integer_highscore') || 0;
+            document.getElementById('highScoreDisplay').innerText = savedHighScore;
+            buildNumberLineTicks();
+        };
+
+        // Toggle Visual Number Line
+        function toggleNumberLine() {
+            isNumberLineOpen = !isNumberLineOpen;
+            const drawer = document.getElementById('numberLineDrawer');
+            const toggleText = document.getElementById('numberLineToggleText');
+            if (isNumberLineOpen) {
+                drawer.classList.remove('hidden');
+                toggleText.innerText = "Close Number Line";
+            } else {
+                drawer.classList.add('hidden');
+                toggleText.innerText = "Open Number Line (-20 to +20)";
+            }
+        }
+
+        // Build Number Line Ticks (-20 to +20)
+        function buildNumberLineTicks() {
+            const container = document.getElementById('numberLineTicks');
+            let html = '<div class="absolute top-1/2 left-0 right-0 h-0.5 bg-purple-500/40 -translate-y-1/2 z-0"></div>';
+            for (let i = -20; i <= 20; i += 2) {
+                html += `
+                    <div class="relative z-10 flex flex-col items-center">
+                        <div class="w-1 h-3 bg-purple-400 mb-1"></div>
+                        <span class="text-[10px] sm:text-xs font-mono text-purple-300 font-bold">${i}</span>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        // Web Audio API Spooky Ambient Drone
+        function toggleMusic() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            isMusicPlaying = !isMusicPlaying;
+            const icon = document.getElementById('musicIcon');
+            const text = document.getElementById('musicText');
+
+            if (isMusicPlaying) {
+                icon.innerText = "🔊";
+                text.innerText = "Music On";
+                startSpookyDrone();
+            } else {
+                icon.innerText = "🔇";
+                text.innerText = "Music Off";
+                stopSpookyDrone();
+            }
         }
 
-        function playSound(type) {
-            if (!soundEnabled) return;
-            initAudio();
+        function startSpookyDrone() {
             if (!audioCtx) return;
-
             try {
-                const osc = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                osc.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
+                // Master gain for low volume creepy drone
+                musicGain = audioCtx.createGain();
+                musicGain.gain.setValueAtTime(0.04, audioCtx.currentTime); // very low volume so no distraction
+                musicGain.connect(audioCtx.destination);
 
-                const now = audioCtx.currentTime;
+                // Low ominous chord frequencies (minor 9th ambient pad)
+                musicOsc1 = audioCtx.createOscillator();
+                musicOsc1.type = 'sawtooth';
+                musicOsc1.frequency.setValueAtTime(55, audioCtx.currentTime); // A1 note
 
-                if (type === 'correct') {
-                    // Upward magical chime
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(440, now);
-                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
-                    gainNode.gain.setValueAtTime(0.2, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-                    osc.start(now);
-                    osc.stop(now + 0.2);
-                } else if (type === 'wrong') {
-                    // Low eerie buzz
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(150, now);
-                    osc.frequency.linearRampToValueAtTime(90, now + 0.25);
-                    gainNode.gain.setValueAtTime(0.25, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                    osc.start(now);
-                    osc.stop(now + 0.3);
-                } else if (type === 'click') {
-                    // Soft pop
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(300, now);
-                    gainNode.gain.setValueAtTime(0.1, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-                    osc.start(now);
-                    osc.stop(now + 0.05);
-                } else if (type === 'start') {
-                    // Spooky arpeggio
-                    osc.type = 'square';
-                    osc.frequency.setValueAtTime(220, now);
-                    osc.frequency.setValueAtTime(330, now + 0.1);
-                    osc.frequency.setValueAtTime(440, now + 0.2);
-                    gainNode.gain.setValueAtTime(0.15, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-                    osc.start(now);
-                    osc.stop(now + 0.35);
-                }
-            } catch (e) {
-                console.error("Audio error:", e);
+                musicOsc2 = audioCtx.createOscillator();
+                musicOsc2.type = 'triangle';
+                musicOsc2.frequency.setValueAtTime(65.41, audioCtx.currentTime); // C2 note
+
+                // Filter for spooky muffled cave effect
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(220, audioCtx.currentTime);
+
+                musicOsc1.connect(filter);
+                musicOsc2.connect(filter);
+                filter.connect(musicGain);
+
+                musicOsc1.start();
+                musicOsc2.start();
+            } catch(e) {
+                console.log("Audio Context Error:", e);
             }
         }
 
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            const icon = document.getElementById('soundIcon');
-            if (soundEnabled) {
-                icon.setAttribute('data-lucide', 'volume-2');
-                icon.classList.remove('text-gray-500');
-                icon.classList.add('text-halloween-green');
-            } else {
-                icon.setAttribute('data-lucide', 'volume-x');
-                icon.classList.remove('text-halloween-green');
-                icon.classList.add('text-gray-500');
+        function stopSpookyDrone() {
+            if (musicOsc1) {
+                try { musicOsc1.stop(); musicOsc1.disconnect(); } catch(e){}
+                musicOsc1 = null;
             }
-            lucide.createIcons();
-            playSound('click');
-        }
-
-        let gameState = {
-            difficulty: 'normal', // 'normal' or 'hard'
-            score: 0,
-            streak: 0,
-            maxStreak: 0,
-            correctCount: 0,
-            lives: 3,
-            timeLeft: 60,
-            timerInterval: null,
-            currentProblem: { num1: 0, op: '+', num2: 0, answer: 0, text: '' },
-            userAnswerInput: '0'
-        };
-
-        // Load High Score from localStorage
-        let highScore = localStorage.getItem('spooky_integer_highscore') || 0;
-        document.getElementById('highScoreDisplay').innerText = highScore;
-
-        function setDifficulty(diff) {
-            gameState.difficulty = diff;
-            playSound('click');
-            const normBtn = document.getElementById('diffNormalBtn');
-            const hardBtn = document.getElementById('diffHardBtn');
-            if (diff === 'normal') {
-                normBtn.className = "p-3 rounded-xl border-2 border-halloween-orange bg-halloween-orange/20 text-white font-bold transition flex flex-col items-center space-y-1";
-                normBtn.querySelector('i').className = "w-5 h-5 text-halloween-orange";
-                hardBtn.className = "p-3 rounded-xl border-2 border-purple-900 bg-purple-950/40 text-gray-400 font-bold transition flex flex-col items-center space-y-1";
-                hardBtn.querySelector('i').className = "w-5 h-5 text-gray-500";
-            } else {
-                hardBtn.className = "p-3 rounded-xl border-2 border-halloween-neonPink bg-halloween-neonPink/20 text-white font-bold transition flex flex-col items-center space-y-1";
-                hardBtn.querySelector('i').className = "w-5 h-5 text-halloween-neonPink";
-                normBtn.className = "p-3 rounded-xl border-2 border-purple-900 bg-purple-950/40 text-gray-400 font-bold transition flex flex-col items-center space-y-1";
-                normBtn.querySelector('i').className = "w-5 h-5 text-gray-500";
+            if (musicOsc2) {
+                try { musicOsc2.stop(); musicOsc2.disconnect(); } catch(e){}
+                musicOsc2 = null;
             }
         }
 
-        function openRulesModal() {
-            document.getElementById('rulesModal').classList.remove('hidden');
-            document.getElementById('rulesModal').classList.add('flex');
-            playSound('click');
-        }
-
-        function closeRulesModal() {
-            document.getElementById('rulesModal').classList.remove('flex');
-            document.getElementById('rulesModal').classList.add('hidden');
-            playSound('click');
-        }
-
-        function startCountdown() {
-            playSound('start');
-            document.getElementById('mainMenuView').classList.add('hidden');
-            document.getElementById('countdownView').classList.remove('hidden');
-
-            let count = 3;
-            const countEl = document.getElementById('countdownNumber');
-            countEl.innerText = count;
-
-            const countInterval = setInterval(() => {
-                count--;
-                if (count > 0) {
-                    countEl.innerText = count;
-                    playSound('click');
-                } else if (count === 0) {
-                    countEl.innerText = "SPOOK!";
-                } else {
-                    clearInterval(countInterval);
-                    document.getElementById('countdownView').classList.add('hidden');
-                    startGame();
-                }
-            }, 1000);
-        }
-
+        // Start Game Session
         function startGame() {
-            gameState.score = 0;
-            gameState.streak = 0;
-            gameState.maxStreak = 0;
-            gameState.correctCount = 0;
-            gameState.lives = 3;
-            gameState.timeLeft = 60;
-            gameState.userAnswerInput = '0';
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
 
-            updateHUD();
+            score = 0;
+            streak = 0;
+            maxStreak = 0;
+            timeLeft = 180; // 3 minutes start
+
+            updateStatsDisplay();
             generateNewProblem();
 
-            document.getElementById('gameplayView').classList.remove('hidden');
-
-            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
-            gameState.timerInterval = setInterval(() => {
-                gameState.timeLeft--;
-                document.getElementById('hudTimer').innerText = gameState.timeLeft + 's';
-                if (gameState.timeLeft <= 0) {
-                    clearInterval(gameState.timerInterval);
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
                     endGame();
                 }
             }, 1000);
+
+            setTimeout(() => {
+                document.getElementById('answerInput').focus();
+            }, 100);
         }
 
+        // Update Timer Display in MM:SS
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            document.getElementById('timerDisplay').innerText = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Update Stats UI
+        function updateStatsDisplay() {
+            document.getElementById('scoreDisplay').innerText = score;
+            document.getElementById('streakDisplay').innerText = `${streak} 🔥`;
+            updateTimerDisplay();
+        }
+
+        // Generate Random Integer between -15 and +15 (excluding 0 for cleaner operations)
+        function getRandomInt(min, max) {
+            let val;
+            do {
+                val = Math.floor(Math.random() * (max - min + 1)) + min;
+            } while (val === 0);
+            return val;
+        }
+
+        // Generate Math Problem (-15 to +15 addition & subtraction)
         function generateNewProblem() {
-            gameState.userAnswerInput = '0';
-            updateAnswerDisplay();
+            const num1 = getRandomInt(-15, 15);
+            const num2 = getRandomInt(-15, 15);
+            const op = Math.random() < 0.5 ? '+' : '-';
 
-            let minNum = gameState.difficulty === 'hard' ? -30 : -15;
-            let maxNum = gameState.difficulty === 'hard' ? 30 : 15;
-
-            let num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
-            let num2 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
-            let ops = ['+', '-'];
-            let op = ops[Math.floor(Math.random() * ops.length)];
-
-            // In hard mode, sometimes create double negative formatting like -5 - (-8)
-            let text = "";
-            let answer = 0;
-
+            let answer;
             if (op === '+') {
                 answer = num1 + num2;
-                let formattedNum2 = num2 < 0 ? `(${num2})` : `${num2}`;
-                text = `${num1} + ${formattedNum2}`;
             } else {
                 answer = num1 - num2;
-                let formattedNum2 = num2 < 0 ? `(${num2})` : `${num2}`;
-                text = `${num1} - ${formattedNum2}`;
             }
 
-            gameState.currentProblem = { num1, op, num2, answer, text };
-            document.getElementById('problemText').innerText = text;
+            currentProblem = { num1, op, num2, answer };
 
-            // Animate ghost appearance
-            const ghost = document.getElementById('ghostContainer');
-            ghost.classList.remove('animate-float');
-            void ghost.offsetWidth; // trigger reflow
-            ghost.classList.add('animate-float');
-
-            updateNumberLine(0);
-        }
-
-        function appendKey(char) {
-            playSound('click');
-            if (char === '-') {
-                if (gameState.userAnswerInput.startsWith('-')) {
-                    gameState.userAnswerInput = gameState.userAnswerInput.substring(1);
-                } else if (gameState.userAnswerInput === '0') {
-                    gameState.userAnswerInput = '-';
-                } else {
-                    gameState.userAnswerInput = '-' + gameState.userAnswerInput;
-                }
-            } else {
-                if (gameState.userAnswerInput === '0') {
-                    gameState.userAnswerInput = char;
-                } else if (gameState.userAnswerInput === '-0') {
-                    gameState.userAnswerInput = '-' + char;
-                } else {
-                    if (gameState.userAnswerInput.length < 5) {
-                        gameState.userAnswerInput += char;
-                    }
-                }
-            }
-            updateAnswerDisplay();
-            updateNumberLineFromInput();
-        }
-
-        function deleteKey() {
-            playSound('click');
-            if (gameState.userAnswerInput.length > 1) {
-                gameState.userAnswerInput = gameState.userAnswerInput.slice(0, -1);
-                if (gameState.userAnswerInput === '-') gameState.userAnswerInput = '0';
-            } else {
-                gameState.userAnswerInput = '0';
-            }
-            updateAnswerDisplay();
-            updateNumberLineFromInput();
-        }
-
-        function clearAnswer() {
-            playSound('click');
-            gameState.userAnswerInput = '0';
-            updateAnswerDisplay();
-            updateNumberLineFromInput();
-        }
-
-        function updateAnswerDisplay() {
-            document.getElementById('answerDisplay').innerText = gameState.userAnswerInput;
-        }
-
-        function submitAnswer() {
-            let userVal = parseInt(gameState.userAnswerInput, 10);
-            if (isNaN(userVal)) userVal = 0;
-
-            if (userVal === gameState.currentProblem.answer) {
-                // Correct
-                playSound('correct');
-                gameState.correctCount++;
-                gameState.streak++;
-                if (gameState.streak > gameState.maxStreak) gameState.maxStreak = gameState.streak;
-                
-                let points = 100 + (gameState.streak * 15);
-                gameState.score += points;
-
-                // Visual flash green
-                const badge = document.getElementById('problemBadge');
-                badge.className = "mt-3 px-6 py-2 rounded-2xl bg-emerald-950/90 border-2 border-emerald-500 shadow-xl transition";
-                setTimeout(() => {
-                    badge.className = "mt-3 px-6 py-2 rounded-2xl bg-halloween-dark/90 border-2 border-purple-700 shadow-xl transition";
-                    generateNewProblem();
-                }, 300);
-
-            } else {
-                // Wrong
-                playSound('wrong');
-                gameState.streak = 0;
-                gameState.lives--;
-
-                // Visual flash red / shake
-                const badge = document.getElementById('problemBadge');
-                badge.className = "mt-3 px-6 py-2 rounded-2xl bg-red-950/90 border-2 border-red-500 shadow-xl animate-shake";
-                setTimeout(() => {
-                    badge.className = "mt-3 px-6 py-2 rounded-2xl bg-halloween-dark/90 border-2 border-purple-700 shadow-xl";
-                }, 500);
-
-                if (gameState.lives <= 0) {
-                    clearInterval(gameState.timerInterval);
-                    endGame();
-                }
-            }
-            updateHUD();
-        }
-
-        // Keyboard listener for desktop convenience
-        window.addEventListener('keydown', (e) => {
-            if (document.getElementById('gameplayView').classList.contains('hidden')) return;
-
-            if (e.key >= '0' && e.key <= '9') {
-                appendKey(e.key);
-            } else if (e.key === '-' || e.key === '_') {
-                appendKey('-');
-            } else if (e.key === 'Backspace') {
-                deleteKey();
-            } else if (e.key === 'Enter') {
-                submitAnswer();
-            }
-        });
-
-        function updateHUD() {
-            document.getElementById('hudScore').innerText = gameState.score;
-            document.getElementById('hudStreak').innerText = gameState.streak + 'x';
+            // Format representation nicely with parentheses for negative numbers
+            const formatNum = (n) => n < 0 ? `(${n})` : `${n}`;
+            document.getElementById('problemDisplay').innerText = `${formatNum(num1)} ${op} ${formatNum(num2)}`;
             
-            let livesHtml = '';
-            for (let i = 0; i < 3; i++) {
-                if (i < gameState.lives) {
-                    livesHtml += '<i data-lucide="heart" class="w-4 h-4 fill-current text-red-500"></i>';
+            const input = document.getElementById('answerInput');
+            input.value = '';
+            input.focus();
+        }
+
+        // Handle Answer Submission
+        function submitAnswer(e) {
+            e.preventDefault();
+            const inputElem = document.getElementById('answerInput');
+            const userVal = parseInt(inputElem.value, 10);
+
+            if (isNaN(userVal)) return;
+
+            const feedback = document.getElementById('feedbackBanner');
+
+            if (userVal === currentProblem.answer) {
+                // Correct Answer
+                score += 10 + (streak * 2);
+                streak++;
+                if (streak > maxStreak) maxStreak = streak;
+
+                // Adaptive Option A: Every streak of 3 correct answers adds +10 bonus seconds
+                if (streak > 0 && streak % 3 === 0) {
+                    timeLeft += 10;
+                    feedback.innerHTML = `<span class="text-green-400 font-extrabold animate-bounce">✨ Correct! Streak Bonus: +10 Seconds! ✨</span>`;
                 } else {
-                    livesHtml += '<i data-lucide="heart" class="w-4 h-4 text-gray-600"></i>';
+                    feedback.innerHTML = `<span class="text-emerald-400 font-bold">✨ Correct! Magical Brew Successful! ✨</span>`;
                 }
-            }
-            document.getElementById('hudLives').innerHTML = livesHtml;
-            lucide.createIcons();
-        }
 
-        let numberLineVisible = false;
-        function toggleNumberLine() {
-            numberLineVisible = !numberLineVisible;
-            const drawer = document.getElementById('numberLineDrawer');
-            const btnText = document.getElementById('numberLineToggleText');
-            if (numberLineVisible) {
-                drawer.classList.remove('hidden');
-                btnText.innerText = "Hide Number Line";
+                playTone(587.33, 0.15); // D5 chime
+                generateNewProblem();
             } else {
-                drawer.classList.add('hidden');
-                btnText.innerText = "Show Number Line";
+                // Incorrect Answer
+                streak = 0;
+                feedback.innerHTML = `<span class="text-rose-400 font-bold">💥 Incorrect! The correct potion sum was ${currentProblem.answer}</span>`;
+                playTone(220, 0.2); // Low buzz
+                generateNewProblem();
             }
-            playSound('click');
+
+            updateStatsDisplay();
+
+            // Clear feedback after 2 seconds
+            setTimeout(() => {
+                if(feedback) feedback.innerHTML = '';
+            }, 2000);
         }
 
-        function updateNumberLineFromInput() {
-            let val = parseInt(gameState.userAnswerInput, 10);
-            if (isNaN(val)) val = 0;
-            updateNumberLine(val);
+        // Web Audio UI sound feedback (Short pleasant/buzzer tones)
+        function playTone(frequency, duration) {
+            if (!audioCtx) return;
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
         }
 
-        function updateNumberLine(val) {
-            document.getElementById('numberLinePosition').innerText = `Current Pos: ${val}`;
-            // Map value roughly between -10 and 10 to percentage 0% to 100%
-            let clamped = Math.max(-10, Math.min(10, val));
-            let pct = ((clamped + 10) / 20) * 100;
-            document.getElementById('numberLineMarker').style.left = `${pct}%`;
-        }
-
+        // End Game Session
         function endGame() {
-            document.getElementById('gameplayView').classList.add('hidden');
-            document.getElementById('gameOverView').classList.remove('hidden');
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.remove('hidden');
 
-            document.getElementById('finalScore').innerText = gameState.score;
-            document.getElementById('finalStreak').innerText = gameState.maxStreak + 'x';
-            document.getElementById('finalCorrect').innerText = gameState.correctCount;
+            document.getElementById('finalScore').innerText = score;
+            document.getElementById('finalStreak').innerText = `${maxStreak} 🔥`;
 
-            if (gameState.score > highScore) {
-                highScore = gameState.score;
-                localStorage.setItem('spooky_integer_highscore', highScore);
-                document.getElementById('highScoreDisplay').innerText = highScore;
+            // Update High Score
+            const currentHigh = parseInt(localStorage.getItem('spooky_integer_highscore') || '0', 10);
+            if (score > currentHigh) {
+                localStorage.setItem('spooky_integer_highscore', score);
+                document.getElementById('highScoreDisplay').innerText = score;
             }
-            playSound('wrong');
-        }
-
-        function returnToMenu() {
-            playSound('click');
-            document.getElementById('gameOverView').classList.add('hidden');
-            document.getElementById('mainMenuView').classList.remove('hidden');
         }
     </script>
 </body>
